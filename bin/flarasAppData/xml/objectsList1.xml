@@ -1,0 +1,47 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<objectsList>
+  <object3D>
+    <label/>
+    <filePath>dae/airplane/models/airplane.dae</filePath>
+    <translation>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </translation>
+    <rotation>
+      <x>90</x>
+      <y>0</y>
+      <z>0</z>
+    </rotation>
+    <scale>
+      <x>0.1</x>
+      <y>0.1</y>
+      <z>0.1</z>
+    </scale>
+    <texture>
+      <hasTexture>0</hasTexture>
+      <texturePath/>
+      <width>0</width>
+      <height>0</height>
+    </texture>
+    <audio>
+      <hasAudio>0</hasAudio>
+      <audioPath/>
+      <repeatAudio>0</repeatAudio>
+    </audio>
+    <video>
+      <hasVideo>0</hasVideo>
+      <videoPath/>
+      <width>0</width>
+      <height>0</height>
+      <repeatVideo>0</repeatVideo>
+    </video>
+    <animation>
+      <hasAnimation>1</hasAnimation>
+      <period>10</period>
+      <rotationAxis>2</rotationAxis>
+      <radius>200</radius>
+      <rotationDirection>1</rotationDirection>
+    </animation>
+  </object3D>
+</objectsList>

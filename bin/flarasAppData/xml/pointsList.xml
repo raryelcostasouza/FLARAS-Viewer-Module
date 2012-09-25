@@ -1,0 +1,21 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<pointsList>
+  <point>
+    <label/>
+    <position>
+      <x>100</x>
+      <y>0</y>
+      <z>0</z>
+    </position>
+    <filePathObjectList>xml/objectsList0.xml</filePathObjectList>
+  </point>
+  <point>
+    <label/>
+    <position>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </position>
+    <filePathObjectList>xml/objectsList1.xml</filePathObjectList>
+  </point>
+</pointsList>

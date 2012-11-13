@@ -67,17 +67,8 @@ package flaras.controller.io.fileReader
 			aXMLFile = XML(e.target.data);
 			
 			for each (var point:XML in aXMLFile.point) 
-			{
-				if (point.label == undefined)
-				{
-					label = "";
-				}
-				else
-				{
-					label = point.label;
-				}
-				
-				aObjCtrPoint.addPointFromXML(new Number3D(point.position.x, point.position.y, point.position.z), label);
+			{				
+				aObjCtrPoint.addPointFromXML(new Number3D(point.position.x, point.position.y, point.position.z), point.label, Boolean(parseInt(point.moveInteractionForScenes)));
 			}
 			
 			aObjCtrPoint.finishedReadingListOfPoints();

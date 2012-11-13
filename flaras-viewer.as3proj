@@ -7,7 +7,7 @@
     <movie path="bin\flaras-viewer-local-running.swf" />
     <movie fps="30" />
     <movie width="640" />
-    <movie height="480" />
+    <movie height="540" />
     <movie version="11" />
     <movie minorVersion="3" />
     <movie platform="Flash Player" />

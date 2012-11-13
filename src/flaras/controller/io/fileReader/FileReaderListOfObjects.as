@@ -69,14 +69,7 @@ package flaras.controller.io.fileReader
 			
 			for each (var obj3D:XML in aXMLFile.object3D) 
 			{			
-				/*var hasAnimation:Boolean;
-				var animationPeriod:Number;
-				var animationAxis:uint;
-				var animationRadius:uint;
-				var animationRotDirection:int;
-				var newFilePath:String;
-				var label:String;*/
-				
+
 				//old flaras project withoud animation support
 				/*if (obj3D.animation.hasAnimation == undefined)
 				{
@@ -93,30 +86,39 @@ package flaras.controller.io.fileReader
 					//flaras project with partial animation support	
 					if (obj3D.animation.radius == undefined && obj3D.animation.rotationDirection == undefined)
 					{
-						animationRadius = 0;
+						animationRadiusA = 0;
+						animationRadiusB = 0;
 						animationRotDirection = 1;
 					}
-					//latest flaras project (support for radius and rotationDirection)
+					//previous flaras project (support for radius and rotationDirection)
+					else if (obj3D.animation.radiusB == undefined)
+					{
+						animationRadiusA = obj3D.animation.radius;
+						animationRadiusB = obj3D.animation.radius;
+						animationRotDirection = obj3D.animation.rotationDirection;
+					}
+					//latest flaras project - elliptical animation
 					else
 					{
-						animationRadius = obj3D.animation.radius;
-						animationRotDirection = obj3D.animation.rotationDirection
+						animationRadiusA = obj3D.animation.radius;
+						animationRadiusB = obj3D.animation.radiusB;
+						animationRotDirection = obj3D.animation.rotationDirection;
 					}
-				}*/
+				}
 				
-				/*if (obj3D.label == undefined)
+				if (obj3D.label == undefined)
 				{
 					label = "";
 				}
 				else
 				{
 					label = obj3D.label;
-				}*/
+				}
 				
 				//only on FLARAS Developer
 				//import compatibility of old projects that used KMZ loader
 				//unzip files and then use DAE loader
-				/*flarasTempFolder = new File(FolderConstants.getFlarasAppCurrentFolder());
+				flarasTempFolder = new File(FolderConstants.getFlarasAppCurrentFolder());
 				obj3DFile = flarasTempFolder.resolvePath(obj3D.filePath);
 				if (obj3DFile.extension.toLowerCase() == "zip" || obj3DFile.extension.toLowerCase() == "kmz" )
 				{
@@ -125,7 +127,7 @@ package flaras.controller.io.fileReader
 				else
 				{
 					newFilePath = obj3D.filePath;
-				}	*/			
+				}*/
 				//end only on FLARAS Developer
 												
 				aObjCtrPoint.getCtrScene(aIndexBuffer).addScene(obj3D.filePath, 
@@ -137,9 +139,9 @@ package flaras.controller.io.fileReader
 												Boolean(parseInt(obj3D.audio.hasAudio)), obj3D.audio.audioPath, 
 												Boolean(parseInt(obj3D.audio.repeatAudio)), Boolean(parseInt(obj3D.video.hasVideo)),
 												obj3D.video.videoPath, obj3D.video.width, obj3D.video.height, Boolean(parseInt(obj3D.video.repeatVideo)),
-												Boolean(parseInt(obj3D.animation.hasAnimation)), obj3D.animation.period, obj3D.animation.rotationAxis, obj3D.animation.radius, obj3D.animation.rotationDirection, obj3D.label);
+												Boolean(parseInt(obj3D.animation.hasAnimation)), obj3D.animation.period, obj3D.animation.rotationAxis, obj3D.animation.radius, obj3D.animation.radiusB, obj3D.animation.rotationDirection, obj3D.label);
 			}
-			//aObjCtrPoint.finishedReadingListOfScenes();
+			aObjCtrPoint.finishedReadingListOfScenes();
 		}
 		
 		private function onIOError(e:Event):void

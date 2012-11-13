@@ -1,30 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<kml xmlns='http://earth.google.com/kml/2.1'>
+<kml xmlns='http://www.opengis.net/kml/2.2' xmlns:gx='http://www.google.com/kml/ext/2.2' xmlns:kml='http://www.opengis.net/kml/2.2' xmlns:atom='http://www.w3.org/2005/Atom'>
 <Folder>
-    <name>airplane</name>
-    <description><![CDATA[Created with <a href="http://sketchup.google.com/">Google SketchUp 6.4.112</a>]]></description>
+    <name>base-pilha-azul</name>
+    <description><![CDATA[Created with <a href="http://sketchup.google.com/">Google SketchUp 7.0.10247</a>]]></description>
     <DocumentSource>SketchUp</DocumentSource>
 <visibility>1</visibility>
 <LookAt>
-<heading>334.084</heading>
-<tilt>59.2659</tilt>
-<latitude>40.01672381618179</latitude>
-<longitude>-105.2827789717812</longitude>
-<range>37.6504233684301</range>
-<altitude>21.31690348188274</altitude>
+<heading>129.815</heading>
+<tilt>88.6195</tilt>
+<latitude>40.01707578341525</latitude>
+<longitude>-105.2831314510516</longitude>
+<range>6.229718358999675</range>
+<altitude>0.1501114813333857</altitude>
 </LookAt>
 <Folder>
 <name>Tour</name>
 <Placemark>
-<name>Camera</name>
+<name><![CDATA[Camera]]></name>
 <visibility>1</visibility>
 <LookAt>
-<heading>334.084</heading>
-<tilt>59.2659</tilt>
-<latitude>40.01672381618179</latitude>
-<longitude>-105.2827789717812</longitude>
-<range>37.6504233684301</range>
-<altitude>21.31690348188274</altitude>
+<heading>129.815</heading>
+<tilt>88.6195</tilt>
+<latitude>40.01707578341525</latitude>
+<longitude>-105.2831314510516</longitude>
+<range>6.229718358999675</range>
+<altitude>0.1501114813333857</altitude>
 </LookAt>
 </Placemark>
 </Folder>
@@ -41,7 +41,7 @@
             <altitude>0.000000000000</altitude>
         </Location>
         <Orientation>
-            <heading>0</heading>
+            <heading>-0.000000000000</heading>
             <tilt>0</tilt>
             <roll>0</roll>
         </Orientation>
@@ -51,7 +51,7 @@
             <z>1.0</z>
         </Scale>
         <Link>
-            <href>models/airplane.dae</href>
+            <href>models/base-pilha-azul.dae</href>
         </Link>
     </Model>
   </Placemark></Folder>

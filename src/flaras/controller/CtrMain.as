@@ -44,28 +44,22 @@ package flaras.controller
 		//private var _ctrUserProject:CtrUserProject;
 		private var _ctrMarker:CtrMarker;
 		//private var _ctrGUI:CtrGUI;
-		private var _ctrPointInterWithKbd:CtrPointInteractionWithKbd;
 		private var _ctrMirror:CtrMirror;
 		//private var _ctrCamera:CtrCamera;
+		private var _ctrInteraction:CtrInteraction;
 		private var _fmmapp:FLARToolKitMultiMarkerApp;
 			
 		public function CtrMain(pFMMApp:FLARToolKitMultiMarkerApp)
 		{
-			var stage:Stage = StageReference.getStage();
-			
-			//init aswing variables
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.stageFocusRect = false;
-			AsWingManager.setRoot(stage);
-			
+			initASWing();
 			_fmmapp = pFMMApp;
 			this._ctrMarker = new CtrMarker(this);
 			this._ctrPoint = new CtrPoint(this);
 			//this._ctrUserProject = new CtrUserProject(this);
-			this._ctrPointInterWithKbd = new CtrPointInteractionWithKbd(this);
 			//this._ctrGUI = new CtrGUI(this);
 			this._ctrMirror = new CtrMirror(this, pFMMApp);
 			//this._ctrCamera = new CtrCamera(this);
+			this._ctrInteraction = new CtrInteraction(this);
 			initUI();
 			
 			FolderConstants.setFlarasAppCurrentFolder("flarasAppData");
@@ -74,20 +68,29 @@ package flaras.controller
 			_ctrMarker.loadRefMarkerData();
 		}
 		
+		private function initASWing():void
+		{
+			var stage:Stage;
+			
+			stage = StageReference.getStage();
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.stageFocusRect = true;
+			
+			AsWingManager.setRoot(stage);
+		}
+		
 		private function initUI():void
 		{
 			var bndMMI:BoundaryMultiMarkerInteraction;
-			
-			new BoundaryInteractionUI(this);
 			bndMMI = new BoundaryMultiMarkerInteraction(this);
 		}
 		
 		/*public function set ctrGUI(ctrGUI:CtrGUI):void
 		{
 			this._ctrGUI = ctrGUI;
-		}
+		}*/
 		
-		public function get ctrGUI():CtrGUI
+		/*public function get ctrGUI():CtrGUI
 		{
 			return this._ctrGUI;
 		}*/
@@ -107,9 +110,9 @@ package flaras.controller
 			return this._ctrMarker;
 		}
 		
-		public function get ctrPointInterWithKbd():CtrPointInteractionWithKbd 
+		public function get ctrInteraction():CtrInteraction
 		{
-			return this._ctrPointInterWithKbd;
+			return this._ctrInteraction;
 		}
 		
 		public function get ctrMirror():CtrMirror

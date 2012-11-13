@@ -34,6 +34,7 @@ package flaras.controller
 	import flaras.controller.constants.*;
 	import flaras.controller.io.*;
 	import flaras.controller.io.fileReader.*;
+	import flaras.controller.util.Point3D;
 	import flaras.model.*;
 	import flaras.model.point.*;
 	import flaras.model.scene.*;
@@ -53,6 +54,14 @@ package flaras.controller
 		public function CtrPoint(ctrMain:CtrMain)
 		{
 			this._ctrMain = ctrMain;
+		}
+		
+		public function resetAllScenesPosition():void
+		{
+			for each (var ctr:CtrScene in _listOfCtrScenes) 
+			{
+				ctr.resetAllScenesPosition();
+			}
 		}
 		
 		/*public function destroyListOfPoints():void
@@ -114,14 +123,15 @@ package flaras.controller
 			nListOfScenesAlreadyLoaded = 0;
 		}		
 		
-		/*public function finishedReadingListOfScenes():void
+		public function finishedReadingListOfScenes():void
 		{
 			nListOfScenesAlreadyLoaded++;
 			if (nListOfScenesAlreadyLoaded == _listOfPoints.length)
 			{
-				this._ctrMain.ctrGUI.initProjectTree();
-			}			
-		}*/
+				//this._ctrMain.ctrGUI.initProjectTree();
+				enableAllPoints(false);
+			}
+		}
 		
 		public function getListOfPoints():Vector.<Point>
 		{
@@ -148,27 +158,32 @@ package flaras.controller
 			return _listOfPoints[indexPoint].getPosition();	
 		}
 		
+		public function getMoveInteractionForScenes(indexPoint:uint):Boolean
+		{
+			return _listOfPoints[indexPoint].isMoveInteractionForScenes();
+		}
+		
 		// functions related with adding and removing points -----------------------------------------------------------
-		public function addPointFromXML(pPosition:Number3D, pLabel:String):void
+		public function addPointFromXML(pPosition:Number3D, pLabel:String, pMoveInteractionForScenes:Boolean):void
 		{
 			var p:Point;
 			
-			p = addPoint(pPosition, pLabel, true);
+			p = addPoint(pPosition, pLabel, pMoveInteractionForScenes, true);
 			
 			//read the list of objects associated to the point p
 			new FileReaderListOfObjects(p.getID(), FolderConstants.getFlarasAppCurrentFolder() + "/" + p.getFilePathListOfObjects(), this);
 		}
 		
-		public function addPoint(pPosition:Number3D, pLabel:String, pFromXML:Boolean=false):Point
+		public function addPoint(pPosition:Number3D, pLabel:String, pMoveInteractionForScenes:Boolean, pFromXML:Boolean=false):Point
 		{
 			var p:Point;
 			
 			/*if (!pFromXML)
 			{
 				_ctrMain.ctrUserProject.setUnsavedModifications(true);
-			}			*/
+			}*/			
 			
-			p = new Point(this._listOfPoints.length, pPosition, pLabel)
+			p = new Point(this._listOfPoints.length, pPosition, pLabel, pMoveInteractionForScenes)
 			this._listOfPoints.push(p);
 			this._listOfBoundaryPoints.push(new ViewPoint(p, _ctrMain));
 			this._listOfCtrScenes.push(new CtrScene(_ctrMain, p));
@@ -181,7 +196,7 @@ package flaras.controller
 			var id:uint;
 			var p:Point;
 			
-			_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			//_ctrMain.ctrUserProject.setUnsavedModifications(true);
 			
 			p = _listOfPoints[indexPoint];
 			
@@ -211,9 +226,19 @@ package flaras.controller
 			
 			p = _listOfPoints[indexPoint];
 			p.setLabel(pLabel);
-		}*/
+		}
 		
-		/*public function updatePointPosition(indexPoint:uint, position:Number3D):void
+		public function updatePointMoveInteractionForScenes(indexPoint:uint, moveInteractionForScenes:Boolean):void
+		{
+			var p:Point;
+			
+			_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			
+			p = _listOfPoints[indexPoint];
+			p.setMoveInteractionForScenes(moveInteractionForScenes);
+		}
+		
+		public function updatePointPosition(indexPoint:uint, position:Number3D):void
 		{
 			var bndPoint:ViewPoint;
 			var p:Point;
@@ -329,17 +354,17 @@ package flaras.controller
 			}			
 		}
 		
-		/*public function enablePointUI(indexPoint:int):void
+		public function enablePointUI(indexPoint:int):void
 		{
 			var p:Point = this._listOfPoints[indexPoint];
 			var bndPoint:ViewPoint;
 			
 			bndPoint = _listOfBoundaryPoints[p.getID()];			
-			bndPoint.showAxis();
+			//bndPoint.showAxis();
 			//bndPoint.hidePointSphere();
 			//p.setEnabled(true);
 			enablePoint(p, false, false, false);
-		}*/
+		}
 		
 		private function disablePoint(p:Point, pPlayAudio:Boolean):void
 		{
@@ -347,12 +372,11 @@ package flaras.controller
 			
 			bndPoint = _listOfBoundaryPoints[p.getID()];
 
+			bndPoint.showPointSphere();
 			/*if (!bndPoint.isAxisVisible())
-			{*/
-				bndPoint.showPointSphere();
-			//}
-			
-			bndPoint.hideAuxSphere();
+			{
+				
+			}*/
 			
 			p.setEnabled(false);
 			
@@ -369,13 +393,13 @@ package flaras.controller
 			}
 		}	
 		
-		public function enableAllPoints():void
+		public function enableAllPoints(pPlaySystemAudio:Boolean):void
 		{
 			for each(var p:Point in this._listOfPoints)
 			{
 				if (!p.isEnabled())
 				{
-					enablePoint(p,false,true);
+					enablePoint(p,false,pPlaySystemAudio);
 				}
 			}
 		}
@@ -391,32 +415,18 @@ package flaras.controller
 			}
 		}
 		
-		/*public function disableAllPointsUI():void
+	/*	public function disableAllPointsUI():void
 		{
 			var bndPoint:ViewPoint;
 						
 			for each(var p:Point in this._listOfPoints)
 			{
 				bndPoint = _listOfBoundaryPoints[p.getID()];				
-				bndPoint.hideAxis();
+				//bndPoint.hideAxis();
 				disablePoint(p, false);
 			}
 		}*/
 		//end of functions related with enabling and disabling points
-		
-		public function toggleVisibleAuxSphereOfPoints():void
-		{
-			var bndPoint:ViewPoint;
-			
-			for each(var p:Point in this._listOfPoints)
-			{
-				bndPoint = _listOfBoundaryPoints[p.getID()];
-				if (p.isEnabled())
-				{
-					bndPoint.toggleVisibleAuxSphere();
-				}				
-			}
-		}
 		
 		public function toggleMirrorPointsScenes():void
 		{

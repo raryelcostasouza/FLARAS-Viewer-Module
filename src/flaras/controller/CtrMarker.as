@@ -45,8 +45,8 @@ package flaras.controller
 		private var _modelInteractionMarker:ModelInteractionMarker;
 		private var _modelRefMarker:ModelRefMarker;
 		
-		private static const DEFAULT_SPHERE_SIZE:uint = 20;
-		private static const DEFAULT_SPHERE_DISTANCE:uint = 140;
+		public static const DEFAULT_SPHERE_SIZE:uint = 20;
+		public static const DEFAULT_SPHERE_DISTANCE:uint = 140;
 		public static const DEFAULT_RADIUS_DIFFERENCE:uint = 10;
 		
 		public static const CONTROL_FORWARD:int = 1;
@@ -111,84 +111,44 @@ package flaras.controller
 			_viewRefMarker.updateView(_modelRefMarker);
 		}
 		
-		public function changeMarkerType():void
+		public function setMarkerType2Inspection():void
 		{
-			// if the marker is inspector marker
-			if (_modelInteractionMarker.getMarkerType() == CtrMarker.INSPECTOR_MARKER)
-			{
-				AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_CONTROL_MARKER);
-				
-				//change it to control marker
-				_modelInteractionMarker.setMarkerType(CtrMarker.CONTROL_MARKER);
-				if (_modelInteractionMarker.getControlMarkerType() == CtrMarker.CONTROL_BACKWARD)
-				{
-					_viewInteractionMarker.change2ControlMarkerBackward();
-				}
-				else
-				{
-					_viewInteractionMarker.change2ControlMarkerForward();
-				}
-			}
-			// if the marker is the control marker
-			else
-			{
-				AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_INSPECTOR_MARKER);
-				
-				//change it to inspector marker
-				_modelInteractionMarker.setMarkerType(CtrMarker.INSPECTOR_MARKER);
-				_viewInteractionMarker.change2InspectorMarker();
-				
-			}
-		}
-		
-		public function changeControlMarkerType():void
-		{
-			//only does something if the marker type is control marker
-			if (_modelInteractionMarker.getMarkerType() == CtrMarker.CONTROL_MARKER)
-			{
-				// if it's forward control marker
-				if (_modelInteractionMarker.getControlMarkerType() == CtrMarker.CONTROL_FORWARD)
-				{
-					AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_CONTROL_BACKWARD_MARKER);
-					//change it to backward control marker
-					_modelInteractionMarker.setControlMarkerType(CtrMarker.CONTROL_BACKWARD);
-					_viewInteractionMarker.change2ControlMarkerBackward();
-				}
-				// if it's backward control marker
-				else
-				{
-					AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_CONTROL_FORWARD_MARKER);
-					//change it to forward control marker
-					_modelInteractionMarker.setControlMarkerType(CtrMarker.CONTROL_FORWARD);
-					_viewInteractionMarker.change2ControlMarkerForward();
-				}
-			}
-		}
-		
-		public function changeInteractionSphereSize(deltaSize:int):void
-		{
-			var newSize:uint = _modelInteractionMarker.getSphereSize() + deltaSize;
+			AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_INSPECTOR_MARKER);
 			
-			if (newSize > 0)
-			{
-				//_ctrMain.ctrUserProject.setUnsavedModifications(true);
-				
-				_modelInteractionMarker.setSphereSize(newSize);
-				_viewInteractionMarker.updateSize();
-			}
+			_modelInteractionMarker.setMarkerType(CtrMarker.INSPECTOR_MARKER);
+			_viewInteractionMarker.change2InspectorMarker();
 		}
 		
-		public function changeInteractionSphereDistance(deltaDistance:int):void
+		public function setMarkerType2ControlBackward():void
 		{
-			var newDistance:uint = _modelInteractionMarker.getSphereDistance() + deltaDistance;
+			AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_CONTROL_BACKWARD_MARKER);
 			
-			if (newDistance > 0)
-			{
-				//_ctrMain.ctrUserProject.setUnsavedModifications(true);
-				
-				_modelInteractionMarker.setSphereDistance(newDistance);
-				_viewInteractionMarker.updateDistance();
-			}
+			_modelInteractionMarker.setMarkerType(CtrMarker.CONTROL_MARKER);
+			_modelInteractionMarker.setControlMarkerType(CtrMarker.CONTROL_BACKWARD);
+			_viewInteractionMarker.change2ControlMarkerBackward();
+		}
+		
+		public function setMarkerType2ControlForward():void
+		{
+			AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_CONTROL_FORWARD_MARKER);
+			
+			_modelInteractionMarker.setMarkerType(CtrMarker.CONTROL_MARKER);
+			_modelInteractionMarker.setControlMarkerType(CtrMarker.CONTROL_FORWARD);
+			_viewInteractionMarker.change2ControlMarkerForward();
+		}
+		
+		public function updateInteractionSphereSize(size:int):void
+		{
+			//_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			_modelInteractionMarker.setSphereSize(size);
+			_viewInteractionMarker.updateSize();
+		}
+		
+		public function updateInteractionSphereDistance(distance:int):void
+		{
+			//_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			_modelInteractionMarker.setSphereDistance(distance);
+			_viewInteractionMarker.updateDistance();
 		}
 		
 		public function setInteractionSphereData(distance:uint, size:uint):void
@@ -198,6 +158,8 @@ package flaras.controller
 			
 			_viewInteractionMarker.updateDistance();
 			_viewInteractionMarker.updateSize();
+			_ctrMain.ctrInteraction.getViewGUIInteraction().getViewWindowInteractionSphere().setSliderDistance(distance);
+			_ctrMain.ctrInteraction.getViewGUIInteraction().getViewWindowInteractionSphere().setSliderSize(size);
 		}
 		
 		public function loadInteractionMarkerData():void
@@ -227,13 +189,21 @@ package flaras.controller
 			{
 				_modelRefMarker.setPersistence(true);
 			}
-			//_ctrMain.ctrGUI.getGUI().getMenu().setStatusJCBRefMarkPersist(_modelRefMarker.getPersistence());
-			//_ctrMain.ctrGUI.getGUI().getMarkerPanel().getJCBRefMarkerPersistence().setSelected(_modelRefMarker.getPersistence());
 		}
 		
 		public function mirrorInteractionMarker():void
 		{
 			_viewInteractionMarker.mirror();
+		}
+		
+		public function getInteractionSphereSize():int
+		{
+			return _modelInteractionMarker.getSphereSize();
+		}
+		
+		public function getInteractionSphereDistance():int
+		{
+			return _modelInteractionMarker.getSphereDistance();
 		}
 	}
 }

@@ -2,7 +2,7 @@
 <objectsList>
   <object3D>
     <label/>
-    <filePath>dae/bussola/models/obj3dFile.dae</filePath>
+    <filePath>dae/bussola1/models/obj3dFile.dae</filePath>
     <translation>
       <x>0</x>
       <y>0</y>
@@ -11,7 +11,7 @@
     <rotation>
       <x>0</x>
       <y>0</y>
-      <z>90</z>
+      <z>0</z>
     </rotation>
     <scale>
       <x>10</x>
@@ -37,12 +37,12 @@
       <repeatVideo>0</repeatVideo>
     </video>
     <animation>
-      <hasAnimation>0</hasAnimation>
-      <period>0</period>
-      <rotationAxis>0</rotationAxis>
-      <radius>0</radius>
-      <radiusB>0</radiusB>
-      <rotationDirection>0</rotationDirection>
+      <hasAnimation>1</hasAnimation>
+      <period>10</period>
+      <rotationAxis>2</rotationAxis>
+      <radius>100</radius>
+      <radiusB>100</radiusB>
+      <rotationDirection>1</rotationDirection>
     </animation>
   </object3D>
 </objectsList>

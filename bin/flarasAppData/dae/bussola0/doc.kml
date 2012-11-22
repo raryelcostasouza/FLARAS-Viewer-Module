@@ -1,17 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <kml xmlns='http://www.opengis.net/kml/2.2' xmlns:gx='http://www.google.com/kml/ext/2.2' xmlns:kml='http://www.opengis.net/kml/2.2' xmlns:atom='http://www.w3.org/2005/Atom'>
 <Folder>
-    <name>base-pilha-azul</name>
+    <name>bussola</name>
     <description><![CDATA[Created with <a href="http://sketchup.google.com/">Google SketchUp 7.0.10247</a>]]></description>
     <DocumentSource>SketchUp</DocumentSource>
 <visibility>1</visibility>
 <LookAt>
-<heading>129.815</heading>
-<tilt>88.6195</tilt>
-<latitude>40.01707578341525</latitude>
-<longitude>-105.2831314510516</longitude>
-<range>6.229718358999675</range>
-<altitude>0.1501114813333857</altitude>
+<heading>205.849</heading>
+<tilt>48.3889</tilt>
+<latitude>40.01707370464035</latitude>
+<longitude>-105.2829547886018</longitude>
+<range>10.25277299148508</range>
+<altitude>8.333989563122977</altitude>
 </LookAt>
 <Folder>
 <name>Tour</name>
@@ -19,12 +19,12 @@
 <name><![CDATA[Camera]]></name>
 <visibility>1</visibility>
 <LookAt>
-<heading>129.815</heading>
-<tilt>88.6195</tilt>
-<latitude>40.01707578341525</latitude>
-<longitude>-105.2831314510516</longitude>
-<range>6.229718358999675</range>
-<altitude>0.1501114813333857</altitude>
+<heading>205.849</heading>
+<tilt>48.3889</tilt>
+<latitude>40.01707370464035</latitude>
+<longitude>-105.2829547886018</longitude>
+<range>10.25277299148508</range>
+<altitude>8.333989563122977</altitude>
 </LookAt>
 </Placemark>
 </Folder>
@@ -51,7 +51,7 @@
             <z>1.0</z>
         </Scale>
         <Link>
-            <href>models/base-pilha-azul.dae</href>
+            <href>models/bussola.dae</href>
         </Link>
     </Model>
   </Placemark></Folder>

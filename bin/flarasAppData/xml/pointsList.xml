@@ -4,10 +4,30 @@
     <label/>
     <moveInteractionForScenes>1</moveInteractionForScenes>
     <position>
-      <x>0</x>
+      <x>100</x>
       <y>0</y>
       <z>0</z>
     </position>
     <filePathObjectList>xml/objectsList0.xml</filePathObjectList>
+  </point>
+  <point>
+    <label/>
+    <moveInteractionForScenes>1</moveInteractionForScenes>
+    <position>
+      <x>-100</x>
+      <y>0</y>
+      <z>0</z>
+    </position>
+    <filePathObjectList>xml/objectsList1.xml</filePathObjectList>
+  </point>
+  <point>
+    <label/>
+    <moveInteractionForScenes>1</moveInteractionForScenes>
+    <position>
+      <x>0</x>
+      <y>100</y>
+      <z>0</z>
+    </position>
+    <filePathObjectList>xml/objectsList2.xml</filePathObjectList>
   </point>
 </pointsList>

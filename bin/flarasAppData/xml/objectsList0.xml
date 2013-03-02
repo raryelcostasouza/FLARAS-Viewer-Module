@@ -1,6 +1,7 @@
 <?xml version = "1.0" encoding = "utf-8"?>
 <objectsList>
   <object3D>
+    <idNumber>1</idNumber>
     <label/>
     <filePath>dae/bussola/models/obj3dFile.dae</filePath>
     <translation>
@@ -9,9 +10,58 @@
       <z>0</z>
     </translation>
     <rotation>
+      <x>90</x>
+      <y>0</y>
+      <z>0</z>
+    </rotation>
+    <scale>
+      <x>10</x>
+      <y>10</y>
+      <z>10</z>
+    </scale>
+    <texture>
+      <hasTexture>0</hasTexture>
+      <texturePath/>
+      <width>0</width>
+      <height>0</height>
+    </texture>
+    <audio>
+      <hasAudio>0</hasAudio>
+      <audioPath/>
+      <repeatAudio>0</repeatAudio>
+    </audio>
+    <video>
+      <hasVideo>0</hasVideo>
+      <videoPath/>
+      <width>0</width>
+      <height>0</height>
+      <repeatVideo>0</repeatVideo>
+    </video>
+    <animation>
+      <hasAnimation>1</hasAnimation>
+      <type>circular</type>
+      <circular>
+        <period>10</period>
+        <rotationAxis>2</rotationAxis>
+        <radius>50</radius>
+        <radiusB>100</radiusB>
+        <rotationDirection>-1</rotationDirection>
+      </circular>
+    </animation>
+  </object3D>
+  <object3D>
+    <idNumber>2</idNumber>
+    <label/>
+    <filePath>dae/bussola0/models/obj3dFile.dae</filePath>
+    <translation>
       <x>0</x>
       <y>0</y>
-      <z>90</z>
+      <z>0</z>
+    </translation>
+    <rotation>
+      <x>90</x>
+      <y>0</y>
+      <z>0</z>
     </rotation>
     <scale>
       <x>10</x>
@@ -38,11 +88,7 @@
     </video>
     <animation>
       <hasAnimation>0</hasAnimation>
-      <period>0</period>
-      <rotationAxis>0</rotationAxis>
-      <radius>0</radius>
-      <radiusB>0</radiusB>
-      <rotationDirection>0</rotationDirection>
+      <type>0</type>
     </animation>
   </object3D>
 </objectsList>

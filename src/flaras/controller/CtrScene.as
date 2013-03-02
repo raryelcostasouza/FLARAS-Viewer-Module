@@ -69,23 +69,64 @@ package flaras.controller
 		public function addScene(pFilePath:String, pTranslation:Number3D, pRotation:Number3D, pScale:Number3D,
 			pHasTexture:Boolean, pTexturePath:String, pTextureWidth:Number, pTextureHeight:Number, pHasAudio:Boolean,
 			pAudioPath:String, pRepeatAudio:Boolean, pHasVideo:Boolean, pVideoPath:String, pVideoWidth:Number,
-			pVideoHeight:Number, pRepeatVideo:Boolean, pHasAnimation:Boolean, pAnimationPeriod:Number,
-			pAnimationRotationAxis:uint, pAnimationRadiusA:Number, pAnimationRadiusB:Number, pAnimationRotationDirection:int, pLabel:String, pFromXML:Boolean=false):void
+			pVideoHeight:Number, pRepeatVideo:Boolean, pHasAnimation:Boolean, pCircularAnimationPeriod:Number,
+			pCircularAnimationRotationAxis:uint, pCircularAnimationRadiusA:Number, pCircularAnimationRadiusB:Number, 
+			pCircularAnimationRotationDirection:int, pAnimationType:String, pP2PAnimationDisplacement:Number3D, 
+			pP2PAnimationTime:Number, pP2PAnimationLoop:Boolean, pLabel:String, pIDNumber:int = -1, pFromXML:Boolean=false):void
 		{
 			var scene:FlarasScene;
-		
-			/*if (!pFromXML)
+			var idNumber:uint;
+			
+			if (!pFromXML)
 			{
-				_ctrMain.ctrUserProject.setUnsavedModifications(true);
-			}*/			
+				//_ctrMain.ctrUserProject.setUnsavedModifications(true);
+				idNumber = generateIDNumber();
+			}			
+			
+			if (pIDNumber == -1)
+			{
+				idNumber = generateIDNumber();
+			}
+			else
+			{
+				idNumber = pIDNumber;
+			}
 			
 			scene = buildScene(pFilePath, pTranslation, pRotation, absScale(pScale), pHasTexture, pTexturePath,
 				pTextureWidth, pTextureHeight, pHasAudio, pAudioPath, pRepeatAudio, pHasVideo, pVideoPath,
-				pVideoWidth, pVideoHeight, pRepeatVideo, pHasAnimation, pAnimationPeriod, pAnimationRotationAxis,
-				pAnimationRadiusA, pAnimationRadiusB, pAnimationRotationDirection, pLabel);
+				pVideoWidth, pVideoHeight, pRepeatVideo, pHasAnimation, pCircularAnimationPeriod, pCircularAnimationRotationAxis,
+				pCircularAnimationRadiusA, pCircularAnimationRadiusB, pCircularAnimationRotationDirection,
+				pAnimationType, pP2PAnimationDisplacement, pP2PAnimationTime, pP2PAnimationLoop,
+				pLabel, idNumber);
 			
 			_listOfScenes2.push(scene);
 			_listOfViewFlarasScenes.push(buildViewScene(scene));
+		}
+		
+		private function generateIDNumber():uint
+		{
+			var id:uint;
+			
+			id = 0;
+			do
+			{
+				id++;
+				
+			}while (!isGeneratedIDUnique(id));
+			
+			return id;
+		}
+		
+		private function isGeneratedIDUnique(pGeneratedID:uint):Boolean
+		{
+			for each (var s:FlarasScene in _listOfScenes2)
+			{
+				if (s.getIDNumber() == pGeneratedID)
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		private static function absScale(scale:Number3D):Number3D
@@ -97,24 +138,26 @@ package flaras.controller
 			pHasTexture:Boolean, pTexturePath:String, pTextureWidth:Number, pTextureHeight:Number, pHasAudio:Boolean,
 			pAudioPath:String, pRepeatAudio:Boolean, pHasVideo:Boolean, pVideoPath:String, pVideoWidth:Number,
 			pVideoHeight:Number, pRepeatVideo:Boolean, pHasAnimation:Boolean, pAnimationPeriod:Number,
-			pAnimationRotationAxis:uint, pAnimationRadiusA:Number, pAnimationRadiusB:Number, pAnimationRotationDirection:int, pLabel:String):FlarasScene
+			pAnimationRotationAxis:uint, pAnimationRadiusA:Number, pAnimationRadiusB:Number, pAnimationRotationDirection:int, 
+			pAnimationType:String, pP2PAnimationDisplacement:Number3D, 
+			pP2PAnimationTime:Number, pP2PAnimationLoop:Boolean, pLabel:String, pIDNumber:uint):FlarasScene
 		{
 			var flarasScene:FlarasScene;
 			
 			if (pHasVideo)
 			{
 				flarasScene = new VideoScene(_point, pTranslation, pRotation, absScale(pScale), pVideoPath,
-					pRepeatVideo, pVideoWidth, pVideoHeight, pLabel);
+					pRepeatVideo, pVideoWidth, pVideoHeight, pLabel, pIDNumber );
 			}
 			else if (pHasTexture)
 			{
 				flarasScene = new TextureScene(_point, pTranslation, pRotation, absScale(pScale), pTexturePath,
-					pTextureWidth, pTextureHeight, pLabel);
+					pTextureWidth, pTextureHeight, pLabel, pIDNumber);
 			}
 			else
 			{
 				flarasScene = new VirtualObjectScene(_point, pTranslation, pRotation, absScale(pScale),
-					pFilePath, pLabel);
+					pFilePath, pLabel, pIDNumber);
 			}
 			
 			if (pHasAudio)
@@ -124,8 +167,17 @@ package flaras.controller
 			
 			if (pHasAnimation)
 			{
-				flarasScene.setAnimation(new AnimationScene(pAnimationPeriod, pAnimationRotationAxis,
+				if (pAnimationType.indexOf(AnimationScene.TYPE_CIRCULAR) != -1)
+				{
+					flarasScene.setAnimation(new CircularAnimationScene(pAnimationPeriod, pAnimationRotationAxis,
 					pAnimationRadiusA, pAnimationRadiusB, pAnimationRotationDirection));
+				}
+				else
+				{
+					flarasScene.setAnimation(new P2PAnimationScene(pP2PAnimationDisplacement, 
+					pP2PAnimationTime, pP2PAnimationLoop));
+				}
+				
 			}
 			
 			return flarasScene;
@@ -136,7 +188,8 @@ package flaras.controller
 			pTextureHeight:Number, pHasAudio:Boolean, pAudioPath:String, pRepeatAudio:Boolean, pHasVideo:Boolean,
 			pVideoPath:String, pVideoWidth:Number, pVideoHeight:Number, pRepeatVideo:Boolean, pHasAnimation:Boolean,
 			pAnimationPeriod:Number, pAnimationRotationAxis:uint, pAnimationRadiusA:Number, pAnimationRadiusB:Number, pAnimationRotationDirection:int,
-			pLabel:String):void
+			pAnimationType:String, pP2PAnimationDisplacement:Number3D, 
+			pP2PAnimationTime:Number, pP2PAnimationLoop:Boolean, pLabel:String):void
 		{
 			var scene:FlarasScene;
 			var viewFlarasScene:ViewFlarasScene;
@@ -182,9 +235,9 @@ package flaras.controller
 				   3) Texture -> Object3D or
 				   4) Texture -> Video or
 				   5) Video -> Object3D or
-				 6) Video -> Texture
+				 6) Video -> Texture*/
 				
-				viewFlarasScene.destroy();
+				/*viewFlarasScene.destroy();
 				FileRemover.remove(scene.getBaseSceneFilePath());
 				
 				//removing the scene from lists
@@ -195,7 +248,9 @@ package flaras.controller
 				scene = buildScene(pFilePath, pTranslation, pRotation, absScale(pScale), pHasTexture,
 					pTexturePath, pTextureWidth, pTextureHeight, pHasAudio, pAudioPath, pRepeatAudio,
 					pHasVideo, pVideoPath, pVideoWidth, pVideoHeight, pRepeatVideo, pHasAnimation, pAnimationPeriod,
-					pAnimationRotationAxis, pAnimationRadiusA, pAnimationRadiusB, pAnimationRotationDirection, pLabel);
+					pAnimationRotationAxis, pAnimationRadiusA, pAnimationRadiusB, pAnimationRotationDirection, 
+					pAnimationType, pP2PAnimationDisplacement, pP2PAnimationTime, pP2PAnimationLoop,
+					pLabel, scene.getIDNumber());
 				viewFlarasScene = buildViewScene(scene);
 				
 				//updating scene lists
@@ -209,6 +264,8 @@ package flaras.controller
 		private function buildViewScene(scene:FlarasScene):ViewFlarasScene
 		{
 			var viewFlarasScene:ViewFlarasScene;
+			var circularScene:CircularAnimationScene;
+			var p2pScene:P2PAnimationScene;
 			
 			if (scene is VirtualObjectScene)
 			{
@@ -230,7 +287,16 @@ package flaras.controller
 			
 			if (scene.getAnimation())
 			{
-				viewFlarasScene.setViewAnimation(new ViewAnimationScene(scene.getAnimation(), viewFlarasScene));
+				if (scene.getAnimation() is CircularAnimationScene)
+				{
+					circularScene = CircularAnimationScene(scene.getAnimation());
+					viewFlarasScene.setViewAnimation(new ViewCircularAnimationScene(circularScene, viewFlarasScene));
+				}
+				else
+				{
+					p2pScene = P2PAnimationScene(scene.getAnimation());
+					viewFlarasScene.setViewAnimation(new ViewP2PAnimationScene(p2pScene, viewFlarasScene));
+				}				
 			}
 			
 			return viewFlarasScene;
@@ -258,9 +324,9 @@ package flaras.controller
 			
 			viewFlarasScene = getViewScene(indexScene);
 			viewFlarasScene.destroy();
-		}
+		}*/
 		
-		public function removeScene(indexScene:uint):void
+		/*public function removeScene(indexScene:uint):void
 		{
 			var flarasScene:FlarasScene;
 			var viewFlarasScene:ViewFlarasScene;
@@ -270,6 +336,8 @@ package flaras.controller
 			
 			flarasScene = getScene(indexScene);
 			viewFlarasScene = getViewScene(indexScene);
+			
+			_ctrMain.ctrPoint.updateRemoveSceneFromAttractListAfterRemoveScene(_point.getIDNumber(), flarasScene.getIDNumber());		
 			
 			_listOfScenes2.splice(indexScene, 1);
 			_listOfViewFlarasScenes.splice(indexScene, 1);
@@ -307,6 +375,95 @@ package flaras.controller
 			_listOfViewFlarasScenes.splice(indexSceneDestination, 0, viewFlarasScene);
 		}
 		
+		public function cloneScene(pIndexScene:uint):FlarasScene
+		{
+			var scene2Clone:FlarasScene;
+			var clone:FlarasScene;
+			var newUniqueName:String;
+			var obj3dCompleteFilePath:String;
+			var audioScene:AudioScene;
+			var animationScene:AnimationScene;
+		
+			var obj3DScene:VirtualObjectScene;
+			var textureScene:TextureScene;
+			var videoScene:VideoScene;
+			
+			var circularAnimationScene:CircularAnimationScene;
+			var p2pAnimationScene:P2PAnimationScene;
+			
+			_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			
+			scene2Clone = getScene(pIndexScene);
+			
+			if (scene2Clone is VirtualObjectScene)
+			{
+				obj3DScene = VirtualObjectScene(scene2Clone);
+				clone = new VirtualObjectScene(scene2Clone.getParentPoint(), scene2Clone.getTranslation(), scene2Clone.getRotation(), scene2Clone.getScale(), obj3DScene.getPath3DObjectFile(), scene2Clone.getLabel(), generateIDNumber());
+			}
+			else if (scene2Clone is TextureScene)
+			{
+				textureScene = TextureScene(scene2Clone);
+				clone = new TextureScene(scene2Clone.getParentPoint(), scene2Clone.getTranslation(), scene2Clone.getRotation(), scene2Clone.getScale(), textureScene.getTextureFilePath(), textureScene.getWidth(), textureScene.getHeight(), scene2Clone.getLabel(), generateIDNumber());
+			}
+			else
+			{
+				videoScene = VideoScene(scene2Clone);
+				clone = new VideoScene(scene2Clone.getParentPoint(), scene2Clone.getTranslation(), scene2Clone.getRotation(), scene2Clone.getScale(), videoScene.getVideoFilePath(), videoScene.getRepeatVideo(), videoScene.getWidth(), videoScene.getHeight(), scene2Clone.getLabel(), generateIDNumber());
+			}
+			
+			//if this scene has audio
+			audioScene = scene2Clone.getAudio();
+			if (audioScene)
+			{
+				clone.setAudio(new AudioScene(scene2Clone, audioScene.getAudioFilePath(), audioScene.getRepeatAudio()));
+			}
+			
+			//if this scene has animation
+			animationScene = scene2Clone.getAnimation();
+			if (animationScene)
+			{
+				if (animationScene is CircularAnimationScene)
+				{
+					circularAnimationScene = CircularAnimationScene(animationScene);
+					clone.setAnimation(new CircularAnimationScene(circularAnimationScene.getPeriod(), circularAnimationScene.getRotationAxis(), circularAnimationScene.getRadiusA(), circularAnimationScene.getRadiusB(), circularAnimationScene.getRotationDirection()));
+				}
+				else
+				{
+					p2pAnimationScene = P2PAnimationScene(animationScene);
+					clone.setAnimation(new P2PAnimationScene(p2pAnimationScene.getDisplacement(), p2pAnimationScene.getTime(), p2pAnimationScene.hasLoop()));
+				}				
+			}
+			
+			//copy (with unique name) the file (jpg, png, dae, 3ds, mp3, mp4, flv, etc) associated with the scene
+			if (scene2Clone is TextureScene)
+			{
+				newUniqueName = FileCopy.copyUniqueName(new File(scene2Clone.getBaseSceneFilePath()), false);
+				TextureScene(clone).setTexturePath(FolderConstants.TEXTURE_FOLDER + newUniqueName);
+			}
+			else if (scene2Clone is VideoScene)
+			{
+				newUniqueName = FileCopy.copyUniqueName(new File(scene2Clone.getBaseSceneFilePath()), false);
+				VideoScene(clone).setVideoPath(FolderConstants.VIDEO_FOLDER + newUniqueName);
+			}
+			else
+			{
+				obj3dCompleteFilePath = FolderConstants.getFlarasAppCurrentFolder() + "/" + VirtualObjectScene(scene2Clone).getPath3DObjectFile();
+				newUniqueName = FileCopy.copyUniqueName(new File(obj3dCompleteFilePath), true);			
+				VirtualObjectScene(clone).set3DObjPath(FolderConstants.COLLADA_FOLDER + newUniqueName);
+			}
+			
+			if (audioScene)
+			{
+				newUniqueName = FileCopy.copyUniqueName(new File(FolderConstants.getFlarasAppCurrentFolder() + "/" + audioScene.getAudioFilePath()), false);
+				clone.getAudio().setAudioFilePath(FolderConstants.AUDIO_FOLDER + newUniqueName);
+			}
+			
+			_listOfScenes2.push(clone);
+			_listOfViewFlarasScenes.push(buildViewScene(clone));
+			
+			return clone;
+		}
+		
 		public function updateLabel(pIndexScene:uint, pLabel:String):void
 		{
 			var scene:FlarasScene;
@@ -336,7 +493,7 @@ package flaras.controller
 			var viewScene:ViewFlarasScene;
 			
 			viewScene = getViewScene(indexScene);
-			viewScene.reloadPointPosition();
+			viewScene.resetScenePosition();
 		}
 		
 		public function updateRotation(indexScene:uint, rotation:Number3D):void
@@ -490,29 +647,54 @@ package flaras.controller
 			}			
 		}
 		
-		public function updateAddAnimation(indexScene:uint, period:Number, rotationAxis:uint, radiusA:Number,
+		public function updateAddCircularAnimation(indexScene:uint, period:Number, rotationAxis:uint, radiusA:Number,
 					radiusB:Number, rotationDirection:int):void
 		{
 			var viewScene:ViewFlarasScene;
 			var scene:FlarasScene;
-			var animationScene:AnimationScene;
-			var viewAnimationScene:ViewAnimationScene;
+			var animationScene:CircularAnimationScene;
+			var viewAnimationScene:ViewCircularAnimationScene;
 			
 			_ctrMain.ctrUserProject.setUnsavedModifications(true);
 			
 			scene = getScene(indexScene);
 			viewScene = getViewScene(indexScene);
 			
-			animationScene = new AnimationScene(period, rotationAxis, radiusA, radiusB, rotationDirection);
+			animationScene = new CircularAnimationScene(period, rotationAxis, radiusA, radiusB, rotationDirection);
 			scene.setAnimation(animationScene);
 			
-			viewAnimationScene = new ViewAnimationScene(animationScene, viewScene);
+			viewAnimationScene = new ViewCircularAnimationScene(animationScene, viewScene);
+			viewScene.resetScenePosition();
+			viewScene.setViewAnimation(viewAnimationScene);
+			
+			
+			viewScene.showScene(true);
+		}
+		
+		public function updateAddP2PAnimation(indexScene:uint, displacement:Number3D,
+												time:Number, hasLoop:Boolean):void
+		{
+			var viewScene:ViewFlarasScene;
+			var scene:FlarasScene;
+			var animationScene:P2PAnimationScene;
+			var viewAnimationScene:ViewP2PAnimationScene;
+			
+			_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			
+			scene = getScene(indexScene);
+			viewScene = getViewScene(indexScene);
+			
+			animationScene = new P2PAnimationScene(displacement, time, hasLoop);
+			scene.setAnimation(animationScene);
+			
+			viewAnimationScene = new ViewP2PAnimationScene(animationScene, viewScene);
+			viewScene.resetScenePosition();
 			viewScene.setViewAnimation(viewAnimationScene);
 			
 			viewScene.showScene(true);
 		}
 		
-		public function updateAnimationProperties(indexScene:uint, period:Number, rotationAxis:uint,
+		public function updateCircularAnimationProperties(indexScene:uint, period:Number, rotationAxis:uint,
 			radiusA:Number, radiusB:Number, rotationDirection:int):void
 		{
 			var scene:FlarasScene;
@@ -526,8 +708,29 @@ package flaras.controller
 			if (scene.getAnimation())
 			{
 				viewScene.getViewAnimation().unLoad();
-				scene.getAnimation().setAnimationProperties(period, rotationAxis, radiusA, radiusB, rotationDirection);
+				CircularAnimationScene(scene.getAnimation()).setAnimationProperties(period, rotationAxis, radiusA, radiusB, rotationDirection);
 			}
+			viewScene.resetScenePosition();
+			viewScene.showScene(true);
+		}
+		
+		public function updateP2PAnimationProperties(indexScene:uint, displacement:Number3D,
+													time:Number, hasLoop:Boolean):void
+		{
+			var scene:FlarasScene;
+			var viewScene:ViewFlarasScene;
+			
+			_ctrMain.ctrUserProject.setUnsavedModifications(true);
+			
+			scene = getScene(indexScene);
+			viewScene = getViewScene(indexScene);
+			
+			if (scene.getAnimation())
+			{
+				viewScene.getViewAnimation().unLoad();
+				P2PAnimationScene(scene.getAnimation()).setAnimationProperties(displacement, time, hasLoop);
+			}
+			viewScene.resetScenePosition();
 			viewScene.showScene(true);
 		}
 		
@@ -560,6 +763,29 @@ package flaras.controller
 					viewScene.toggleMirror();
 				}
 			}
+		}
+		
+		public function getIDNumber(pIndexScene:uint):uint
+		{
+			return _listOfScenes2[pIndexScene].getIDNumber();
+		}
+		
+		public function getSceneIndexFromIDNumber(pIDNumber:uint):int
+		{
+			var i:uint;
+			i = 0;
+			for each(var scene:FlarasScene in _listOfScenes2)
+			{
+				if (scene.getIDNumber() == pIDNumber)
+				{
+					return i;
+				}
+				else
+				{
+					i++;
+				}
+			}
+			return -1;
 		}
 		
 		public function getLabel(pIndexScene:uint):String
@@ -660,6 +886,18 @@ package flaras.controller
 		private function getViewScene(indexScene:uint):ViewFlarasScene
 		{
 			return _listOfViewFlarasScenes[indexScene];
+		}
+		
+		public function getSceneIndex(flarasScene:FlarasScene):int
+		{
+			for (var i:uint = 0; i < _listOfScenes2.length; i++ )
+			{
+				if (_listOfScenes2[i] == flarasScene)
+				{
+					return i;
+				}
+			}
+			return -1;
 		}
 	}
 }

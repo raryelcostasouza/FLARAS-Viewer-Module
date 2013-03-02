@@ -32,6 +32,7 @@ package flaras.controller.io.fileReader
 	import flaras.controller.*;
 	import flaras.controller.constants.*;
 	import flaras.controller.io.*;
+	import flaras.model.scene.AnimationScene;
 	import flash.errors.*;
 	import flash.events.*;
 	import flash.net.*;
@@ -69,9 +70,22 @@ package flaras.controller.io.fileReader
 			
 			for each (var obj3D:XML in aXMLFile.object3D) 
 			{			
-
+				var hasAnimation:Boolean;
+				var animationPeriod:Number;
+				var animationAxis:uint;
+				var animationRadiusA:Number;
+				var animationRadiusB:Number;
+				var animationRotDirection:int;
+				var newFilePath:String;
+				var label:String;	
+				var idNumber:int;
+				var animationType:String;
+				var p2pAnimationDisplacement:Number3D;
+				var p2pAnimationTime:Number;
+				var p2pAnimationLoop:Boolean;
+				
 				//old flaras project withoud animation support
-				/*if (obj3D.animation.hasAnimation == undefined)
+				if (obj3D.animation.hasAnimation == undefined)
 				{
 					hasAnimation = false;
 					animationPeriod = 10;
@@ -80,30 +94,82 @@ package flaras.controller.io.fileReader
 				else
 				{
 					hasAnimation = Boolean(parseInt(obj3D.animation.hasAnimation));
-					animationPeriod = obj3D.animation.period;
-					animationAxis = obj3D.animation.rotationAxis;
 					
-					//flaras project with partial animation support	
-					if (obj3D.animation.radius == undefined && obj3D.animation.rotationDirection == undefined)
+					if (obj3D.animation.type == undefined)
 					{
-						animationRadiusA = 0;
-						animationRadiusB = 0;
-						animationRotDirection = 1;
+						animationType = AnimationScene.TYPE_CIRCULAR;
+						//flaras project with partial animation support	
+						if (obj3D.animation.radius == undefined && obj3D.animation.rotationDirection == undefined)
+						{
+							animationPeriod = obj3D.animation.period;
+							animationAxis = obj3D.animation.rotationAxis;
+						
+							animationRadiusA = 0;
+							animationRadiusB = 0;
+							animationRotDirection = 1;
+						}
+						//previous flaras project (support for radius and rotationDirection)
+						else if (obj3D.animation.radiusB == undefined)
+						{
+							animationPeriod = obj3D.animation.period;
+							animationAxis = obj3D.animation.rotationAxis;
+						
+							animationRadiusA = obj3D.animation.radius;
+							animationRadiusB = obj3D.animation.radius;
+							animationRotDirection = obj3D.animation.rotationDirection;
+						}
+						//elliptical animation
+						else
+						{
+							animationPeriod = obj3D.animation.period;
+							animationAxis = obj3D.animation.rotationAxis;
+						
+							
+							animationRadiusA = obj3D.animation.radius;
+							animationRadiusB = obj3D.animation.radiusB;
+							animationRotDirection = obj3D.animation.rotationDirection;
+						}
 					}
-					//previous flaras project (support for radius and rotationDirection)
-					else if (obj3D.animation.radiusB == undefined)
-					{
-						animationRadiusA = obj3D.animation.radius;
-						animationRadiusB = obj3D.animation.radius;
-						animationRotDirection = obj3D.animation.rotationDirection;
-					}
-					//latest flaras project - elliptical animation
+					//after adding point 2 point animation support
 					else
 					{
-						animationRadiusA = obj3D.animation.radius;
-						animationRadiusB = obj3D.animation.radiusB;
-						animationRotDirection = obj3D.animation.rotationDirection;
+						animationType = obj3D.animation.type;
+						if (obj3D.animation.type == AnimationScene.TYPE_CIRCULAR)
+						{
+							p2pAnimationDisplacement = Number3D.ZERO;
+							p2pAnimationTime = 0;
+							p2pAnimationLoop = false;
+							
+							animationPeriod = obj3D.animation.circular.period;
+							animationAxis = obj3D.animation.circular.rotationAxis;							
+							animationRadiusA = obj3D.animation.circular.radius;
+							animationRadiusB = obj3D.animation.circular.radiusB;
+							animationRotDirection = obj3D.animation.circular.rotationDirection;
+						}
+						else
+						{
+							p2pAnimationDisplacement = new Number3D(obj3D.animation.point2point.displacement.x, 
+																	obj3D.animation.point2point.displacement.y, 
+																	obj3D.animation.point2point.displacement.z);
+							p2pAnimationTime = obj3D.animation.point2point.time;
+							p2pAnimationLoop = new Boolean(parseInt(obj3D.animation.point2point.loop));
+							
+							animationPeriod = 0;
+							animationAxis = 0;
+							animationRadiusA = 0;
+							animationRadiusB = 0;
+							animationRotDirection = 0;
+						}
 					}
+				}
+				
+				if (obj3D.idNumber == undefined)
+				{
+					idNumber = -1;
+				}
+				else
+				{
+					idNumber = parseInt(obj3D.idNumber);
 				}
 				
 				if (obj3D.label == undefined)
@@ -115,6 +181,7 @@ package flaras.controller.io.fileReader
 					label = obj3D.label;
 				}
 				
+				/*
 				//only on FLARAS Developer
 				//import compatibility of old projects that used KMZ loader
 				//unzip files and then use DAE loader
@@ -139,7 +206,9 @@ package flaras.controller.io.fileReader
 												Boolean(parseInt(obj3D.audio.hasAudio)), obj3D.audio.audioPath, 
 												Boolean(parseInt(obj3D.audio.repeatAudio)), Boolean(parseInt(obj3D.video.hasVideo)),
 												obj3D.video.videoPath, obj3D.video.width, obj3D.video.height, Boolean(parseInt(obj3D.video.repeatVideo)),
-												Boolean(parseInt(obj3D.animation.hasAnimation)), obj3D.animation.period, obj3D.animation.rotationAxis, obj3D.animation.radius, obj3D.animation.radiusB, obj3D.animation.rotationDirection, obj3D.label);
+												hasAnimation, animationPeriod, animationAxis, animationRadiusA, animationRadiusB, animationRotDirection, 
+												animationType, p2pAnimationDisplacement, p2pAnimationTime, p2pAnimationLoop,
+												label, idNumber, true);
 			}
 			aObjCtrPoint.finishedReadingListOfScenes();
 		}

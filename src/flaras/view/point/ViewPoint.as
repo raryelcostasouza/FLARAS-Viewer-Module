@@ -49,15 +49,13 @@ package flaras.view.point
 		//private var _obj3DAxis:DAE;
 		
 		private var _ctrMain:CtrMain;
-		private var _point:Point;
+		protected var _point:Point;
 		private var  _sphereOfPointLayer:ViewportLayer;
 		
 		public static const RADIUS_SPHERE_OF_POINT:uint = 10;
 		
 		public function ViewPoint(pPoint:Point, pCtrMain:CtrMain) 
 		{
-			
-			
 			_ctrMain = pCtrMain;
 			_point = pPoint;
 			
@@ -91,7 +89,7 @@ package flaras.view.point
 		{
 			_obj3DSphereOfPoint.visible = true;
 		}
-		
+				
 		/*public function hideAxis():void
 		{
 			_obj3DAxis.visible = false;
@@ -107,13 +105,13 @@ package flaras.view.point
 			return _obj3DAxis.visible;
 		}*/
 		
-		/*public function setPosition(position:Number3D):void
+		public function setPosition(position:Number3D):void
 		{
 			_obj3DSphereOfPoint.position = position;
 			//_obj3DAxis.position = position;
-		}*/
+		}
 		
-		/*public function destroy():void
+		public function destroy():void
 		{
 			MarkerNodeManager.removeObjFromMarkerNode(_obj3DSphereOfPoint, CtrMarker.REFERENCE_MARKER);
 			//MarkerNodeManager.removeObjFromMarkerNode(_obj3DAxis, CtrMarker.REFERENCE_MARKER);
@@ -124,7 +122,7 @@ package flaras.view.point
 			
 			_obj3DSphereOfPoint = null;
 			//_obj3DAxis = null;
-		}*/
+		}
 		
 		private function onComplete(e:Event):void
 		{

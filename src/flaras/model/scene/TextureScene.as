@@ -39,9 +39,9 @@ package flaras.model.scene
 		private var _width:Number;
 		private var _height:Number;
 		
-		public function TextureScene(parentPoint:Point, translation:Number3D, rotation:Number3D, scale:Number3D,textureFilePath:String, width:Number, height:Number, pLabel:String)
+		public function TextureScene(parentPoint:Point, translation:Number3D, rotation:Number3D, scale:Number3D,textureFilePath:String, width:Number, height:Number, pLabel:String, pIDNumber:uint)
 		{
-			super(this, parentPoint, translation, rotation, scale, pLabel);
+			super(this, parentPoint, translation, rotation, scale, pLabel, pIDNumber);
 			_textureFilePath = textureFilePath;
 			_width = width;
 			_height = height;
@@ -68,7 +68,7 @@ package flaras.model.scene
 			_height = height;
 		}
 		
-		/*override public function getListOfFilesAndDirs():Vector.<String> 
+		override public function getListOfFilesAndDirs():Vector.<String> 
 		{
 			var listOfFilesAndDirs:Vector.<String>;
 			
@@ -81,6 +81,6 @@ package flaras.model.scene
 		override public function getBaseSceneFilePath():String 
 		{
 			return FolderConstants.getFlarasAppCurrentFolder() + "/" + _textureFilePath;
-		}*/
+		}
 	}
 }

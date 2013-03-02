@@ -30,13 +30,16 @@
 package flaras.view.scene 
 {
 	import flaras.controller.*;
+	import flaras.controller.audio.AudioManager;
+	import flaras.controller.constants.SystemFilesPathsConstants;
 	import flaras.controller.util.*;
 	import flaras.model.*;
+	import flaras.model.point.AttractionRepulsionPoint;
 	import flaras.model.scene.*;
 	import flash.errors.*;
 	import flash.events.*;
 	import flash.filters.*;
-	import flash.geom.*;
+	import flash.geom.Point;
 	import org.papervision3d.core.math.*;
 	import org.papervision3d.core.render.data.*;
 	import org.papervision3d.materials.*;
@@ -140,6 +143,14 @@ package flaras.view.scene
 			{
 				_obj3D.position = Number3D.add(_baseFlarasScene.getTranslation(), _baseFlarasScene.getParentPoint().getPosition());
 				_posRotationCenter = _obj3D.position;
+				
+				if (_viewAnimation)
+				{
+					if (_viewAnimation is ViewP2PAnimationScene)
+					{
+						ViewP2PAnimationScene(_viewAnimation).setStartPointPosition(null);
+					}
+				}
 			}			
 		}
 		
@@ -319,11 +330,16 @@ package flaras.view.scene
 			
 				//drag the object in the XY plane
 				// if the object is not animated
-				if (!_viewAnimation)
+				if (!_viewAnimation || _viewAnimation is ViewP2PAnimationScene)
 				{
 					//copy the new translation to the obj3d directly
 					_obj3D.x = mousePosRelative2RefMarker.x;
 					_obj3D.y = mousePosRelative2RefMarker.y;
+					
+					if (_viewAnimation is ViewP2PAnimationScene)
+					{
+						ViewP2PAnimationScene(_viewAnimation).setStartPointPosition(new Number3D(mousePosRelative2RefMarker.x, mousePosRelative2RefMarker.y, _obj3D.z));
+					}
 				}
 				else
 				{
@@ -331,17 +347,24 @@ package flaras.view.scene
 					//to the obj directly. It's just needed to update the coordinates of the center of rotation.
 					_posRotationCenter.x = mousePosRelative2RefMarker.x;
 					_posRotationCenter.y = mousePosRelative2RefMarker.y;
-				}				
+				}
+				
+				checkAttractionRepulsion();
 			}			
 		}
 		
 		public function moveAlongZAxisTo(zPos:int):void
 		{
 			// if the object is not animated
-			if (!_viewAnimation)
+			if (!_viewAnimation || _viewAnimation is ViewP2PAnimationScene)
 			{
 				//copy the new translation to the obj3d directly
 				_obj3D.z = zPos;
+				
+				if (_viewAnimation is ViewP2PAnimationScene)
+				{
+					ViewP2PAnimationScene(_viewAnimation).setStartPointPosition(new Number3D(_viewAnimation.getCurrentTranslation().x, _viewAnimation.getCurrentTranslation().y, zPos));
+				}
 			}
 			else
 			{
@@ -349,6 +372,7 @@ package flaras.view.scene
 				//to the obj directly. It's just needed to update the coordinates of the center of rotation.
 				_posRotationCenter.z = zPos;
 			}
+			checkAttractionRepulsion();
 		}
 		
 		private function stopDragXY(e:Event):void
@@ -375,6 +399,54 @@ package flaras.view.scene
 		private function onMouseDown(e:MouseEvent):void
 		{
 			_ctrMain.ctrInteraction.mouseClickScene(_baseFlarasScene.getParentPoint(), this);
+		}
+		
+		private function checkAttractionRepulsion():void
+		{
+			var pointPosition:Number3D;
+			var distPoint2Scene:Number;
+			var sceneIndex:uint;
+			var pointIndex:uint;
+			var sceneIDNumber:uint;
+			var objAttractionPoint:AttractionRepulsionPoint;
+			
+			//index of the point where the moving scene is associated 
+			pointIndex = _baseFlarasScene.getParentPoint().getIndexOnList();
+			sceneIndex = _ctrMain.ctrPoint.getCtrScene(pointIndex).getSceneIndex(_baseFlarasScene);
+			sceneIDNumber = _ctrMain.ctrPoint.getCtrScene(pointIndex).getIDNumber(sceneIndex);
+			
+			//for each attraction/repulsion point
+			for each (var p:flaras.model.point.Point in _ctrMain.ctrPoint.getListOfPoints())
+			{
+				if (p is AttractionRepulsionPoint)
+				{
+					objAttractionPoint = AttractionRepulsionPoint(p);
+					
+					pointPosition = p.getPosition();
+					distPoint2Scene = distance(pointPosition, _obj3D.position);					
+					if (distPoint2Scene < objAttractionPoint.getAttractionSphereRadius())
+					{
+						if (_ctrMain.ctrPoint.isSceneOnAttractionList(p.getIndexOnList(), _ctrMain.ctrPoint.getIDNumber(pointIndex), sceneIDNumber))
+						{
+							//attract
+							AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_ATTRACTION);
+							_obj3D.position = pointPosition;
+						}
+						else
+						{
+							//repulse
+							AudioManager.playSystemAudio(SystemFilesPathsConstants.AUDIO_PATH_REPULSION);
+							resetScenePosition();
+						}
+						stopDragXY(null);	
+					}
+				}
+			}
+		}
+		
+		private static function distance(p1:Number3D, p2:Number3D):Number
+		{
+			return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow(p1.z + p2.z, 2));
 		}
 	}
 }
